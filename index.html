@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Isha & Nihar | The Engagement</title>
+    <meta name="description" content="The Basa and Kadam families warmly invite you to celebrate the engagement of Isha & Nihar.">
+
+    <meta property="og:url" content="https://ishaniharsinvite.vercel.app/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Isha & Nihar's Engagement">
+    <meta property="og:description" content="The Basa and Kadam families warmly invite you to celebrate the engagement of Isha & Nihar.">
+    
+    <meta property="og:image" content="https://ishaniharsinvite.vercel.app/gate.jpg">
+    <meta property="og:image:secure_url" content="https://ishaniharsinvite.vercel.app/gate.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="ishaandniharinvite.vercel.app">
+    <meta property="twitter:url" content="https://ishaniharsinvite.vercel.app/">
+    <meta name="twitter:title" content="Isha & Nihar's Engagement">
+    <meta name="twitter:description" content="The Basa and Kadam families warmly invite you to celebrate the engagement of Isha & Nihar.">
+    <meta name="twitter:image" content="https://ishaniharsinvite.vercel.app/gate.jpg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. Reset & Variables --- */
+        :root {
+            --bg-color-closed: #cb9eba; 
+            --bg-color-open: #fdfbf7;   
+            --paper-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color-closed);
+            transition: background-color 2.5s ease;
+            overflow: hidden; 
+        }
+
+        /* --- 2. Texture Overlay --- */
+        .texture-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.07; 
+            pointer-events: none;
+            z-index: 999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- 3. Preloader (Highest Priority) --- */
+        #preloader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; 
+            height: 100vh;
+            height: 100dvh; 
+            background-color: var(--bg-color-closed);
+            z-index: 10000; /* Max Z-Index */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+        
+        .monogram {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            color: #fff;
+            letter-spacing: 5px;
+            animation: pulse-text 2s infinite ease-in-out;
+        }
+        @keyframes pulse-text { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .fade-out-loader { opacity: 0; pointer-events: none; }
+
+        /* --- 4. Landing Screen (Gate + Countdown + Text) --- */
+        #landing-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100;
+            display: flex;
+            flex-direction: column; /* Vertical Stack */
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Space between elements */
+            transition: opacity 1s ease, transform 1s ease;
+            perspective: 2000px; /* For 3D Gate */
+        }
+
+        /* The "Tap to Enter" Text */
+        .click-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.4rem;
+            color: #fff;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+            transition: opacity 0.5s ease;
+            margin-bottom: 10px;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; transform: scale(1.05); } }
+
+        /* The 3D Gate Container */
+        .gatefold-container {
+            position: relative;
+            width: 300px; 
+            height: 420px; 
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 3s ease;
+        }
+
+        .gatefold-flap {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            transform-style: preserve-3d;
+            box-shadow: 0 0 25px rgba(0,0,0,0.2); 
+            transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .gatefold-flap-left { left: 0; transform-origin: left; }
+        .gatefold-flap-right { right: 0; transform-origin: right; }
+
+        .flap-face {
+            position: absolute;
+            width: 100%; height: 100%;
+            /* KEEPING THIS AS gate.png FOR HIGH QUALITY */
+            background-image: url('gate.png'); 
+            background-size: 200% 100%;
+            background-repeat: no-repeat;
+            backface-visibility: hidden; 
+        }
+        .flap-face-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            /* KEEPING THIS AS gate.png FOR HIGH QUALITY */
+            background-image: url('gate.png');
+            background-size: 200% 100%;
+            background-repeat: no-repeat;
+            transform: rotateY(180deg);
+            filter: brightness(0.6);
+        }
+        .gatefold-flap-left .flap-face { background-position: left center; border-radius: 4px 0 0 4px; }
+        .gatefold-flap-right .flap-face { background-position: right center; border-radius: 0 4px 4px 0; }
+        .gatefold-flap-left .flap-face-back { background-position: left center; border-radius: 0 4px 4px 0; }
+        .gatefold-flap-right .flap-face-back { background-position: right center; border-radius: 4px 0 0 4px; }
+
+        /* Gate Open State */
+        .gatefold-container.open .gatefold-flap-left { transform: rotateY(-120deg); }
+        .gatefold-container.open .gatefold-flap-right { transform: rotateY(120deg); }
+
+        /* The Countdown */
+        .countdown-wrapper {
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-top: 10px;
+        }
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .time-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 45px;
+        }
+        .number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 500;
+            line-height: 1;
+        }
+        .label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        .divider {
+            height: 30px;
+            width: 1px;
+            background-color: rgba(255,255,255,0.4);
+            align-self: center;
+        }
+
+        /* Landing Screen Fade Out */
+        #landing-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        /* --- 5. Invitation Content (Hidden Initially) --- */
+        .invitation-wrapper {
+            display: none; 
+            width: 100%;
+            min-height: 100vh;
+            flex-direction: column; /* Force Stack */
+            align-items: center;
+            padding: 40px 20px 100px 20px; 
+            z-index: 10;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px); 
+            transition: opacity 2.5s ease, transform 2.5s ease;
+        }
+        
+        .invitation-wrapper.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card {
+            background: #fff;
+            width: 100%;
+            max-width: 500px; 
+            margin-bottom: 50px; 
+            box-shadow: var(--paper-shadow);
+            border-radius: 2px; 
+            position: relative;
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border: 1px solid rgba(203, 158, 186, 0.4); 
+            pointer-events: none;
+        }
+
+        .card img {
+            width: 100%;
+            display: block;
+            border-radius: 2px;
+        }
+        
+        /* Animation for second card */
+        .scroll-trigger {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1.2s ease-out;
+        }
+        .scroll-trigger.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 6. Music Control --- */
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.5);
+            z-index: 1000;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        #music-control:hover { transform: scale(1.1); }
+        .music-icon { width: 16px; height: 16px; fill: #4a0e0e; }
+        .spinning { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- 7. Falling Petals --- */
+        #petal-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            display: none; 
+            overflow: hidden;
+        }
+        .petal {
+            position: absolute;
+            top: -10%;
+            background-color: rgba(255, 183, 178, 0.6); 
+            border-radius: 150% 0 150% 0;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Mobile Adjustments --- */
+        @media (max-width: 600px) {
+            /* Scale down gate to fit text above and below */
+            .gatefold-container { width: 240px; height: 340px; }
+            
+            /* Text sizing */
+            .click-text { font-size: 1.1rem; }
+            .number { font-size: 1.8rem; }
+            .divider { display: none; } /* Clean look */
+            
+            /* Card spacing */
+            .card { margin-bottom: 20px; }
+            
+            /* Ensure Peek Effect works (limit image height) */
+            .card img {
+                max-height: 75vh;
+                object-fit: contain; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="music.mp3" preload="auto" loop></audio>
+    
+    <div class="texture-overlay"></div>
+
+    <div id="preloader">
+        <div class="monogram">I & N</div>
+    </div>
+
+    <div id="music-control">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </div>
+
+    <div id="petal-container"></div>
+
+    <div id="landing-screen">
+        
+        <div class="click-text">Tap to Enter</div>
+
+        <div class="gatefold-container" id="gate">
+            <div class="gatefold-flap gatefold-flap-left">
+                <div class="flap-face"></div>
+                <div class="flap-face flap-face-back"></div>
+            </div>
+            <div class="gatefold-flap gatefold-flap-right">
+                <div class="flap-face"></div>
+                <div class="flap-face flap-face-back"></div>
+            </div>
+        </div>
+
+        <div class="countdown-wrapper">
+            <div class="countdown-container">
+                <div class="time-block">
+                    <span class="number" id="days">00</span>
+                    <span class="label">Days</span>
+                </div>
+                <div class="divider"></div>
+                <div class="time-block">
+                    <span class="number" id="hours">00</span>
+                    <span class="label">Hrs</span>
+                </div>
+                <div class="divider"></div>
+                <div class="time-block">
+                    <span class="number" id="minutes">00</span>
+                    <span class="label">Mins</span>
+                </div>
+                <div class="divider"></div>
+                <div class="time-block">
+                    <span class="number" id="seconds">00</span>
+                    <span class="label">Secs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="invitation-wrapper" id="invite-content">
+        <div class="card"> 
+            <img src="page1.jpg" alt="Invitation Page 1">
+        </div>
+        <div class="card scroll-trigger">
+            <img src="page2.jpg" alt="Invitation Page 2">
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preloader = document.getElementById('preloader');
+            const landingScreen = document.getElementById('landing-screen');
+            const gate = document.getElementById('gate');
+            const inviteContent = document.getElementById('invite-content');
+            const petalContainer = document.getElementById('petal-container');
+            const music = document.getElementById('bg-music');
+            const musicBtn = document.getElementById('music-control');
+
+            // --- A. Preloader Sequence ---
+            setTimeout(() => {
+                preloader.classList.add('fade-out-loader');
+                setTimeout(() => { preloader.style.display = 'none'; }, 1000);
+            }, 1500);
+
+            // --- B. Countdown Logic ---
+            const targetDateStr = "2025-12-23T16:30:00+05:30"; 
+            const targetDate = new Date(targetDateStr).getTime();
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                if (distance < 0) return;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                daysEl.innerText = days < 10 ? '0' + days : days;
+                hoursEl.innerText = hours < 10 ? '0' + hours : hours;
+                minutesEl.innerText = minutes < 10 ? '0' + minutes : minutes;
+                secondsEl.innerText = seconds < 10 ? '0' + seconds : seconds;
+            }
+            setInterval(updateCountdown, 1000);
+            updateCountdown(); 
+
+            // --- C. Gate Interaction ---
+            // We attach the click to the whole landing screen so tapping anywhere (Gate/Text/Timer) works
+            landingScreen.addEventListener('click', () => {
+                if (gate.classList.contains('open')) return;
+                
+                gate.classList.add('open');
+                
+                playMusic();
+
+                // Fade out the whole landing screen wrapper after a delay
+                setTimeout(() => {
+                    landingScreen.classList.add('fade-out');
+                }, 800);
+
+                // Reveal Invitation Content
+                setTimeout(() => {
+                    document.body.style.backgroundColor = 'var(--bg-color-open)';
+                    inviteContent.style.display = 'flex'; // Enforce Flex
+                    
+                    setTimeout(() => {
+                         inviteContent.classList.add('reveal');
+                    }, 50);
+
+                    document.body.style.overflowY = 'auto'; 
+                    petalContainer.style.display = 'block';
+                    musicBtn.style.display = 'flex'; 
+                    createPetals();
+                }, 1000); 
+
+                // Hide landing screen from DOM
+                setTimeout(() => {
+                    landingScreen.style.display = 'none';
+                }, 2500);
+            });
+
+            // --- D. Music Logic (1:15 Start) ---
+            let isPlaying = false;
+            
+            function playMusic() {
+                try {
+                    music.currentTime = 75; // 1 min 15 sec
+                    music.volume = 0; 
+                    music.play();
+                    musicBtn.classList.add('spinning');
+                    isPlaying = true;
+                    
+                    let volFade = setInterval(() => {
+                        if (music.volume < 0.9) music.volume += 0.1;
+                        else clearInterval(volFade);
+                    }, 200);
+                } catch (e) { console.log("Audio blocked"); }
+            }
+
+            musicBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Don't trigger gate click if hitting music button later
+                if (isPlaying) {
+                    music.pause();
+                    musicBtn.classList.remove('spinning');
+                    isPlaying = false;
+                } else {
+                    music.play();
+                    musicBtn.classList.add('spinning');
+                    isPlaying = true;
+                }
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && isPlaying) {
+                    music.pause();
+                    musicBtn.classList.remove('spinning');
+                    isPlaying = false;
+                }
+            });
+
+            // --- E. Scroll Observer ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.01 }); 
+            document.querySelectorAll('.scroll-trigger').forEach(el => observer.observe(el));
+
+            // --- F. Petals ---
+            function createPetals() {
+                setInterval(() => {
+                    const petal = document.createElement('div');
+                    petal.classList.add('petal');
+                    const size = Math.random() * 10 + 5 + 'px';
+                    petal.style.width = size;
+                    petal.style.height = size;
+                    petal.style.left = Math.random() * 100 + 'vw';
+                    petal.style.animationDuration = Math.random() * 3 + 5 + 's'; 
+                    const colors = ['#ffc4c4', '#ffdfd3', '#ffffff'];
+                    petal.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    petalContainer.appendChild(petal);
+                    setTimeout(() => { petal.remove(); }, 8000);
+                }, 400); 
+            }
+        });
+    </script>
+</body>
+</html>
